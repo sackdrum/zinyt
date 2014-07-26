@@ -1,0 +1,360 @@
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Category](
+	[CategoryID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Description] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Category] PRIMARY KEY CLUSTERED 
+(
+	[CategoryID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+/****** Object:  Table [dbo].[User]    Script Date: 10/03/2013 14:31:05 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[User](
+	[UserID] [bigint] IDENTITY(1,1) NOT NULL,
+	[FirstName] [nvarchar](50) NOT NULL,
+	[LastName] [nvarchar](50) NOT NULL,
+	[ScreenName] [nvarchar](50) NOT NULL,
+	[Password] [nvarchar](32) NOT NULL,
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
+(
+	[UserID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+/****** Object:  Table [dbo].[Question]    Script Date: 10/03/2013 14:30:20 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Question](
+	[QuestionID] [bigint] IDENTITY(1,1) NOT NULL,
+	[Question] [nvarchar](max) NOT NULL,
+	[AskedBy] [bigint] NOT NULL,
+	[DateCreated] [datetime] NOT NULL,
+ CONSTRAINT [PK_Question] PRIMARY KEY CLUSTERED 
+(
+	[QuestionID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[Question]  WITH CHECK ADD  CONSTRAINT [FK_Question_User] FOREIGN KEY([AskedBy])
+REFERENCES [dbo].[User] ([UserID])
+GO
+
+ALTER TABLE [dbo].[Question] CHECK CONSTRAINT [FK_Question_User]
+GO
+
+
+/****** Object:  Table [dbo].[QuestionCategory]    Script Date: 10/03/2013 14:31:50 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[QuestionCategory](
+	[QuestionCategoryID] [bigint] IDENTITY(1,1) NOT NULL,
+	[QuestionID] [bigint] NOT NULL,
+	[CategoryID] [int] NOT NULL,
+ CONSTRAINT [PK_QuestionCategory] PRIMARY KEY CLUSTERED 
+(
+	[QuestionCategoryID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[QuestionCategory]  WITH CHECK ADD  CONSTRAINT [FK_QuestionCategory_Category] FOREIGN KEY([CategoryID])
+REFERENCES [dbo].[Category] ([CategoryID])
+GO
+
+ALTER TABLE [dbo].[QuestionCategory] CHECK CONSTRAINT [FK_QuestionCategory_Category]
+GO
+
+ALTER TABLE [dbo].[QuestionCategory]  WITH CHECK ADD  CONSTRAINT [FK_QuestionCategory_Question] FOREIGN KEY([QuestionID])
+REFERENCES [dbo].[Question] ([QuestionID])
+GO
+
+ALTER TABLE [dbo].[QuestionCategory] CHECK CONSTRAINT [FK_QuestionCategory_Question]
+GO
+
+
+/****** Object:  Table [dbo].[QuestionComment]    Script Date: 10/03/2013 14:32:35 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[QuestionComment](
+	[QuestionCommentID] [bigint] IDENTITY(1,1) NOT NULL,
+	[Comment] [nvarchar](max) NOT NULL,
+	[CommentBy] [bigint] NOT NULL,
+	[DateCommented] [datetime] NOT NULL,
+	[QuestionID] [bigint] NOT NULL,
+ CONSTRAINT [PK_QuestionComment] PRIMARY KEY CLUSTERED 
+(
+	[QuestionCommentID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[QuestionComment]  WITH CHECK ADD  CONSTRAINT [FK_QuestionComment_Question] FOREIGN KEY([QuestionID])
+REFERENCES [dbo].[Question] ([QuestionID])
+GO
+
+ALTER TABLE [dbo].[QuestionComment] CHECK CONSTRAINT [FK_QuestionComment_Question]
+GO
+
+ALTER TABLE [dbo].[QuestionComment]  WITH CHECK ADD  CONSTRAINT [FK_QuestionComment_User] FOREIGN KEY([CommentBy])
+REFERENCES [dbo].[User] ([UserID])
+GO
+
+ALTER TABLE [dbo].[QuestionComment] CHECK CONSTRAINT [FK_QuestionComment_User]
+GO
+
+
+
+
+/****** Object:  Table [dbo].[Answer]    Script Date: 10/03/2013 14:27:53 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Answer](
+	[AnswerID] [bigint] IDENTITY(1,1) NOT NULL,
+	[Answer] [nvarchar](max) NOT NULL,
+	[AnswerBy] [bigint] NOT NULL,
+	[DateCreated] [datetime] NOT NULL,
+	[QuestionID] [bigint] NOT NULL,
+ CONSTRAINT [PK_Answer] PRIMARY KEY CLUSTERED 
+(
+	[AnswerID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[Answer]  WITH CHECK ADD  CONSTRAINT [FK_Answer_Question] FOREIGN KEY([QuestionID])
+REFERENCES [dbo].[Question] ([QuestionID])
+GO
+
+ALTER TABLE [dbo].[Answer] CHECK CONSTRAINT [FK_Answer_Question]
+GO
+
+ALTER TABLE [dbo].[Answer]  WITH CHECK ADD  CONSTRAINT [FK_Answer_User] FOREIGN KEY([AnswerBy])
+REFERENCES [dbo].[User] ([UserID])
+GO
+
+ALTER TABLE [dbo].[Answer] CHECK CONSTRAINT [FK_Answer_User]
+GO
+
+
+
+/****** Object:  Table [dbo].[AnswerComment]    Script Date: 10/03/2013 14:28:56 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[AnswerComment](
+	[AnswerCommentID] [bigint] IDENTITY(1,1) NOT NULL,
+	[Comment] [nvarchar](max) NOT NULL,
+	[CommentedBy] [bigint] NOT NULL,
+	[DateCommented] [datetime] NOT NULL,
+	[AnswerID] [bigint] NOT NULL,
+ CONSTRAINT [PK_AnswerComment] PRIMARY KEY CLUSTERED 
+(
+	[AnswerCommentID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[AnswerComment]  WITH CHECK ADD  CONSTRAINT [FK_AnswerComment_Answer] FOREIGN KEY([AnswerID])
+REFERENCES [dbo].[Answer] ([AnswerID])
+GO
+
+ALTER TABLE [dbo].[AnswerComment] CHECK CONSTRAINT [FK_AnswerComment_Answer]
+GO
+
+ALTER TABLE [dbo].[AnswerComment]  WITH CHECK ADD  CONSTRAINT [FK_AnswerComment_User] FOREIGN KEY([CommentedBy])
+REFERENCES [dbo].[User] ([UserID])
+GO
+
+ALTER TABLE [dbo].[AnswerComment] CHECK CONSTRAINT [FK_AnswerComment_User]
+GO
+
+
+
+/****** Object:  Table [dbo].[UpvoteAnswer]    Script Date: 10/03/2013 14:33:02 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[UpvoteAnswer](
+	[UpvoteAnswerID] [bigint] IDENTITY(1,1) NOT NULL,
+	[UpvoteBy] [bigint] NOT NULL,
+	[Weight] [decimal](3, 0) NOT NULL,
+	[DateUpvoted] [datetime] NOT NULL,
+	[AnswerID] [bigint] NOT NULL,
+ CONSTRAINT [PK_UpvoteAnswer] PRIMARY KEY CLUSTERED 
+(
+	[UpvoteAnswerID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[UpvoteAnswer]  WITH CHECK ADD  CONSTRAINT [FK_UpvoteAnswer_Answer] FOREIGN KEY([AnswerID])
+REFERENCES [dbo].[Answer] ([AnswerID])
+GO
+
+ALTER TABLE [dbo].[UpvoteAnswer] CHECK CONSTRAINT [FK_UpvoteAnswer_Answer]
+GO
+
+ALTER TABLE [dbo].[UpvoteAnswer]  WITH CHECK ADD  CONSTRAINT [FK_UpvoteAnswer_User] FOREIGN KEY([UpvoteBy])
+REFERENCES [dbo].[User] ([UserID])
+GO
+
+ALTER TABLE [dbo].[UpvoteAnswer] CHECK CONSTRAINT [FK_UpvoteAnswer_User]
+GO
+
+ALTER TABLE [dbo].[UpvoteAnswer] ADD  CONSTRAINT [DF_UpvoteAnswer_Weight]  DEFAULT ((0)) FOR [Weight]
+GO
+
+
+/****** Object:  Table [dbo].[UserCategoryWeight]    Script Date: 10/03/2013 14:33:36 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[UserCategoryWeight](
+	[UserCatWeightID] [bigint] IDENTITY(1,1) NOT NULL,
+	[CategoryID] [int] NOT NULL,
+	[UserID] [bigint] NOT NULL,
+	[Weight] [decimal](3, 0) NOT NULL,
+	[CommentCount] [int] NOT NULL,
+	[AnswerCount] [int] NOT NULL,
+	[QuestionCount] [int] NOT NULL,
+ CONSTRAINT [PK_UserCategoryWeight] PRIMARY KEY CLUSTERED 
+(
+	[UserCatWeightID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight]  WITH CHECK ADD  CONSTRAINT [FK_UserCategoryWeight_Category] FOREIGN KEY([CategoryID])
+REFERENCES [dbo].[Category] ([CategoryID])
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight] CHECK CONSTRAINT [FK_UserCategoryWeight_Category]
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight]  WITH CHECK ADD  CONSTRAINT [FK_UserCategoryWeight_User] FOREIGN KEY([UserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight] CHECK CONSTRAINT [FK_UserCategoryWeight_User]
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight] ADD  CONSTRAINT [DF_UserCategoryWeight_Weight]  DEFAULT ((0)) FOR [Weight]
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight] ADD  CONSTRAINT [DF_UserCategoryWeight_CommentCount]  DEFAULT ((0)) FOR [CommentCount]
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight] ADD  CONSTRAINT [DF_UserCategoryWeight_AnswerCount]  DEFAULT ((0)) FOR [AnswerCount]
+GO
+
+ALTER TABLE [dbo].[UserCategoryWeight] ADD  CONSTRAINT [DF_UserCategoryWeight_QuestionCount]  DEFAULT ((0)) FOR [QuestionCount]
+GO
+
+
+/****** Object:  Table [dbo].[UserVerification]    Script Date: 10/03/2013 14:34:31 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[UserVerification](
+	[UserVerificationID] [bigint] IDENTITY(1,1) NOT NULL,
+	[DateVerified] [datetime] NOT NULL,
+ CONSTRAINT [PK_UserVerification] PRIMARY KEY CLUSTERED 
+(
+	[UserVerificationID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+/****** Object:  Table [dbo].[UserProfile]    Script Date: 10/03/2013 14:34:07 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[UserProfile](
+	[UserProfileID] [bigint] IDENTITY(1,1) NOT NULL,
+	[UserID] [bigint] NOT NULL,
+	[LastLogin] [datetime] NULL,
+	[LastIP] [nvarchar](15) NULL,
+	[VerificationId] [bigint] NULL,
+ CONSTRAINT [PK_UserProfile] PRIMARY KEY CLUSTERED 
+(
+	[UserProfileID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[UserProfile]  WITH CHECK ADD  CONSTRAINT [FK_UserProfile_User] FOREIGN KEY([UserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+
+ALTER TABLE [dbo].[UserProfile] CHECK CONSTRAINT [FK_UserProfile_User]
+GO
+
+ALTER TABLE [dbo].[UserProfile]  WITH CHECK ADD  CONSTRAINT [FK_UserProfile_UserVerification] FOREIGN KEY([VerificationId])
+REFERENCES [dbo].[UserVerification] ([UserVerificationID])
+GO
+
+ALTER TABLE [dbo].[UserProfile] CHECK CONSTRAINT [FK_UserProfile_UserVerification]
+GO
+
